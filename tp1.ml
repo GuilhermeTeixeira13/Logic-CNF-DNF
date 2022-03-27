@@ -114,22 +114,23 @@ let rec ler min max =
           in print_string ""
       in ler min max;;
 
-let stdinLineToArray s =
+let stdinLineToArray s limite =
   let stream = (Scanning.from_string s) in
-  let rec do_parse acc =
+  let rec do_parse acc ini li=
+    if(ini == limite) then acc else (
     try
-      do_parse (Scanf.bscanf stream " %d " (fun x -> x :: acc))
+      do_parse (Scanf.bscanf stream "%d " (fun x -> if (x==0 || x==1) then x :: acc else acc)) (ini+1) (li)
     with
       Scan_failure _ -> acc
-    | End_of_file -> acc
-  in Array.of_list(List.rev (do_parse []));;
-6
+    | End_of_file -> acc)
+  in Array.of_list(List.rev (do_parse [] 0 limite));;
+
 let criaTabelaVerdade k =
   let totalLinhas = int_of_float (2. ** k) in
   let numElementosLinha = int_of_float(k +. 1.) in
   let tabela = Array.init totalLinhas (fun i -> Array.make numElementosLinha 0) in
   for i = 0 to (totalLinhas-1) do
-    tabela.(i) <- (stdinLineToArray (read_line()));
+    tabela.(i) <- (stdinLineToArray (read_line()) numElementosLinha);
   done;
   tabela;;
   
