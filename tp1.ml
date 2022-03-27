@@ -1,4 +1,6 @@
-(* CabeÃ§alho a incluir *)
+open Scanf;;
+
+(* Cabeçalho a incluir *)
 
 type formula =
   | Lit of char
@@ -98,4 +100,40 @@ let string_of_formula =
 
 let print_formula f = normalize_formula f |> string_of_formula |> print_endline
 
-(* Escreva a soluÃ§Ã£o do problema a seguir *)
+(* Escreva a solução do problema a seguir *)
+
+let rec ler min max =
+  let i = read_int () 
+  in 
+    if i <= max && i >= min 
+      then i 
+    else 
+      let () = 
+        if i>max || i<min then 
+          let () = print_string "Número inválido, digite outro --> "
+          in print_string ""
+      in ler min max;;
+
+let parse_integers s =
+  let stream = (Scanning.from_string s) in
+  let rec do_parse acc =
+    try
+      do_parse (Scanf.bscanf stream " %d " (fun x -> x :: acc))
+    with
+      Scan_failure _ -> acc
+    | End_of_file -> acc
+  in (List.rev (do_parse []));;
+
+
+let criaTabelaVerdade k =
+  let totalLinhas = int_of_float (2. ** k) in
+  let numElementosLinha = int_of_float(k +. 1.) in
+  let tabela = [] in
+  for i = 0 to (totalLinhas-1) do
+    tabela @ (parse_integers (read_line()));
+  done;
+  tabela;;
+criaTabelaVerdade 2.;;
+
+(*let k = ler 1 12;;*)
+
