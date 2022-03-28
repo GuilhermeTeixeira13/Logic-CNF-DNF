@@ -102,6 +102,7 @@ let print_formula f = normalize_formula f |> string_of_formula |> print_endline
 
 (* Escreva a solução do problema a seguir *)
 
+(* Retirado do TP2 de PF do Ano passado *)
 let rec ler min max =
   let i = read_int () 
   in 
@@ -114,6 +115,7 @@ let rec ler min max =
           in print_string ""
       in ler min max;;
 
+(* https://stackoverflow.com/questions/39335469/how-to-use-ocaml-scanf-module-to-parse-a-string-containing-integers-separated-by *)
 let stdinLineToArray s limite =
   let stream = (Scanning.from_string s) in
   let rec do_parse acc ini li=
@@ -125,6 +127,7 @@ let stdinLineToArray s limite =
     | End_of_file -> acc)
   in Array.of_list(List.rev (do_parse [] 0 limite));;
 
+(* Feito por nós *)
 let criaTabelaVerdade k =
   let totalLinhas = int_of_float (2. ** k) in
   let numElementosLinha = int_of_float(k +. 1.) in
@@ -137,5 +140,4 @@ let criaTabelaVerdade k =
 let k = float_of_int (ler 1 12) in
 criaTabelaVerdade k;;
 
-(*let k = ler 1 12;;*)
 
