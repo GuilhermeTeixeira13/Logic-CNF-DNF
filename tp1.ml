@@ -1,4 +1,6 @@
-(* CabeÃ§alho a incluir *)
+open Scanf;;
+
+(* Cabeçalho a incluir *)
 
 type formula =
   | Lit of char
@@ -98,4 +100,43 @@ let string_of_formula =
 
 let print_formula f = normalize_formula f |> string_of_formula |> print_endline
 
-(* Escreva a soluÃ§Ã£o do problema a seguir *)
+(* Escreva a solução do problema a seguir *)
+
+(* Retirado do TP2 de PF do Ano passado *)
+let rec ler min max =
+  let i = read_int () 
+  in 
+    if i <= max && i >= min 
+      then i 
+    else 
+      let () = 
+        if i>max || i<min then 
+          let () = print_string "Número inválido, digite outro --> "
+          in print_string ""
+      in ler min max;;
+
+(* https://stackoverflow.com/questions/39335469/how-to-use-ocaml-scanf-module-to-parse-a-string-containing-integers-separated-by *)
+let stdinLineToArray s =
+  let stream = (Scanning.from_string s) in
+  let rec do_parse acc =
+    try
+      do_parse (Scanf.bscanf stream " %d " (fun x -> x :: acc))
+    with
+      Scan_failure _ -> acc
+    | End_of_file -> acc
+  in Array.of_list (List.rev (do_parse []));;
+
+(* Feito por nós *)
+let criaTabelaVerdade k =
+  let totalLinhas = int_of_float (2. ** k) in
+  let numElementosLinha = int_of_float(k +. 1.) in
+  let tabela = Array.init totalLinhas (fun i -> Array.make numElementosLinha 0) in
+  for i = 0 to (totalLinhas-1) do
+    tabela.(i) <- (stdinLineToArray (read_line()));
+  done;
+  tabela;;
+  
+let k = float_of_int (ler 1 12) in
+criaTabelaVerdade k;;
+
+
