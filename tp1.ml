@@ -116,16 +116,15 @@ let rec ler min max =
       in ler min max;;
 
 (* https://stackoverflow.com/questions/39335469/how-to-use-ocaml-scanf-module-to-parse-a-string-containing-integers-separated-by *)
-let stdinLineToArray s limite =
+let stdinLineToArray s =
   let stream = (Scanning.from_string s) in
-  let rec do_parse acc ini li=
-    if(ini == limite) then acc else (
+  let rec do_parse acc =
     try
-      do_parse (Scanf.bscanf stream "%d " (fun x -> if (x==0 || x==1) then x :: acc else acc)) (ini+1) (li)
+      do_parse (Scanf.bscanf stream " %d " (fun x -> x :: acc))
     with
       Scan_failure _ -> acc
-    | End_of_file -> acc)
-  in Array.of_list(List.rev (do_parse [] 0 limite));;
+    | End_of_file -> acc
+  in Array.of_list (List.rev (do_parse []));;
 
 (* Feito por nós *)
 let criaTabelaVerdade k =
@@ -133,7 +132,7 @@ let criaTabelaVerdade k =
   let numElementosLinha = int_of_float(k +. 1.) in
   let tabela = Array.init totalLinhas (fun i -> Array.make numElementosLinha 0) in
   for i = 0 to (totalLinhas-1) do
-    tabela.(i) <- (stdinLineToArray (read_line()) numElementosLinha);
+    tabela.(i) <- (stdinLineToArray (read_line()));
   done;
   tabela;;
   
