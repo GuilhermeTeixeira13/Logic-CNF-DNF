@@ -124,17 +124,16 @@ let stdinLineToArray s =
     with
       Scan_failure _ -> acc
     | End_of_file -> acc
-  in Array.of_list (List.rev (do_parse []));;
+  in List.rev (do_parse []);;
 
 (* Feito por nós *)
 let criaTabelaVerdade k =
   let totalLinhas = int_of_float (2. ** k) in
   let numElementosLinha = int_of_float(k +. 1.) in
-  let tabela = Array.init totalLinhas (fun i -> Array.make numElementosLinha 0) in
-  for i = 0 to (totalLinhas-1) do
-    tabela.(i) <- (stdinLineToArray (read_line()));
-  done;
-  tabela;;
+  let tabela = Array.to_list (Array.init totalLinhas (fun i -> Array.make numElementosLinha 0)) in
+  let lista = List.map (fun x -> stdinLineToArray (read_line())) tabela
+  in
+  lista;;
   
 let k = float_of_int (ler 1 12) in
 criaTabelaVerdade k;;
