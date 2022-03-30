@@ -137,5 +137,3 @@ let criaTabelaVerdade k =
   
 let k = float_of_int (ler 1 12) in
 criaTabelaVerdade k;;
-
-
