@@ -136,7 +136,7 @@ let criaTabelaVerdade k =
   done;
   tabela;;
   
-let k = float_of_int (ler 1 12) in
-criaTabelaVerdade k;;
+let k = read_float() in
+let tabelaVerdade = criaTabelaVerdade k;;
 
 
