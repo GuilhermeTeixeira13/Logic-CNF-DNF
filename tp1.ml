@@ -123,7 +123,23 @@ let criaTabelaVerdade k =
   done;
   tabela;;
   
+
+
+let tabela_valor1 (tabela: int array array) (k: float): (int array array) =
+  let k_inteiro = int_of_float (k) in
+  let newArray = Array.init (Array.length tabela) (fun i -> Array.make k_inteiro 0) in
+  let len1 = Array.length tabela in
+  for i = 0 to (len1 - 1) do
+    if tabela.(i).(k_inteiro) == 1 then  
+      (for j = 0 to (k_inteiro - 1) do
+        newArray.(i).(j) <- tabela.(i).(j);
+        done;)
+  done;
+  newArray;;
+
 let k = read_float();;
 let tabelaVerdade = criaTabelaVerdade k;;
+tabela_valor1 tabelaVerdade k;;
+
 
 
