@@ -122,6 +122,31 @@ let criaTabelaVerdade k =
     tabela.(i) <- (stdinLineToArray (read_line()));
   done;
   tabela;;
+
+let constroiTabelaLetras tabelaDeVars forma =
+  let letras = [|'a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'; 'k'; 'l'|] in
+  let tabelaLetras = Array.init (Array.length tabelaDeVars) (fun i -> Array.make (Array.length tabelaDeVars.(0)) (Lit 'a')) in
+  for posTabela = 0 to (Array.length tabelaDeVars - 1) do
+    for posLinha = 0 to (Array.length tabelaDeVars.(0)) do
+      if forma = "FND" then (
+        if(tabelaDeVars.(posTabela).(posLinha) == 1) then (
+          tabelaLetras.(posTabela).(posLinha) <- Lit letras.(posLinha)
+        )
+        else (
+          tabelaLetras.(posTabela).(posLinha) <- Neg letras.(posLinha)
+        )
+      ) else (
+        if(tabelaDeVars.(posTabela).(posLinha) == 0) then (
+          tabelaLetras.(posTabela).(posLinha) <- Lit letras.(posLinha)
+        )
+        else (
+          tabelaLetras.(posTabela).(posLinha) <- Neg letras.(posLinha)
+        )
+      )        
+    done;
+  done;
+  tabelaLetras;;
+
   
 let k = read_float();;
 let tabelaVerdade = criaTabelaVerdade k;;
