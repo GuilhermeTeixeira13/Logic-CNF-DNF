@@ -102,19 +102,6 @@ let print_formula f = normalize_formula f |> string_of_formula |> print_endline
 
 (* Escreva a solução do problema a seguir *)
 
-(* Retirado do TP2 de PF do Ano passado *)
-let rec ler min max =
-  let i = read_int () 
-  in 
-    if i <= max && i >= min 
-      then i 
-    else 
-      let () = 
-        if i>max || i<min then 
-          let () = print_string "Número inválido, digite outro --> "
-          in print_string ""
-      in ler min max;;
-
 (* https://stackoverflow.com/questions/39335469/how-to-use-ocaml-scanf-module-to-parse-a-string-containing-integers-separated-by *)
 let stdinLineToArray s =
   let stream = (Scanning.from_string s) in
