@@ -123,7 +123,7 @@ let criaTabelaVerdade k =
   done;
   tabela;;
   
-let k = read_float() in
+let k = read_float();;
 let tabelaVerdade = criaTabelaVerdade k;;
 
 
