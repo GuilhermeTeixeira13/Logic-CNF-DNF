@@ -147,7 +147,16 @@ let constroiTabelaLetras tabelaDeVars forma =
   done;
   tabelaLetras;;
 
+
+let l1 = [Lit 'a'; Lit 'b'; Neg 'c'];;
+
+let conjugar a b = Conj(a,b);;
+
+let l2 = List.tl l1;; (*[Lit 'b'; Neg 'c']*)
+
+let f = List.fold_left conjugar (List.hd l1) l2;;
   
+
 let k = read_float();;
 let tabelaVerdade = criaTabelaVerdade k;;
 
