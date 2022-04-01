@@ -196,6 +196,13 @@ let constroiTabelaLetras tabelaDeVars forma =
   done;
   tabelaLetras;;
 
+(* Dada uma lista de fórmulas, conjuga todos os elementos da lista e devolve a fórmula correspondente *)
+let conjugaLista (lista: formula list) : formula =
+  let conjugar a b = Conj(a,b) in
+  let listaSemPrimeiroElemento = List.tl lista in 
+  let f = List.fold_left conjugar (List.hd lista) listaSemPrimeiroElemento in
+  f;;
+
 let k = read_float();;
 let tabelaVerdade = criaTabelaVerdade k;;
 let tabelaSeletivaFND = tabela_seletiva tabelaVerdade k (contadorParcelas tabelaVerdade k "FND") "FND";;
