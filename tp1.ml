@@ -18,28 +18,28 @@ let rec compare_formula f_1 f_2 =
   | (Disj _ | Conj _), (Lit _ | Neg _) -> 1
   | Conj (f_1_1, f_1_2), Conj (f_2_1, f_2_2)
   | Disj (f_1_1, f_1_2), Disj (f_2_1, f_2_2) ->
-      let c = compare_formula f_1_1 f_2_1 in
-      if c = 0 then compare_formula f_1_2 f_2_2 else c
+    let c = compare_formula f_1_1 f_2_1 in
+    if c = 0 then compare_formula f_1_2 f_2_2 else c
   | Conj _, Disj _ | Disj _, Conj _ -> 0
 
 let rec normalize_conjs acc f_1 f_2 =
   match (f_1, f_2) with
   | Conj (f_1_1, f_1_2), Conj (f_2_1, f_2_2) ->
-      normalize_conjs (normalize_conjs acc f_1_1 f_1_2) f_2_1 f_2_2
+    normalize_conjs (normalize_conjs acc f_1_1 f_1_2) f_2_1 f_2_2
   | (Lit _ | Neg _ | Disj _), Conj (f_1', f_2') ->
-      normalize_conjs (normalize_formula f_1 :: acc) f_1' f_2'
+    normalize_conjs (normalize_formula f_1 :: acc) f_1' f_2'
   | Conj (f_1', f_2'), (Lit _ | Neg _ | Disj _) ->
-      normalize_formula f_2 :: normalize_conjs acc f_1' f_2'
+    normalize_formula f_2 :: normalize_conjs acc f_1' f_2'
   | _ -> normalize_formula f_2 :: normalize_formula f_1 :: acc
 
 and normalize_disjs acc f_1 f_2 =
   match (f_1, f_2) with
   | Disj (f_1_1, f_1_2), Disj (f_2_1, f_2_2) ->
-      normalize_disjs (normalize_disjs acc f_1_1 f_1_2) f_2_1 f_2_2
+    normalize_disjs (normalize_disjs acc f_1_1 f_1_2) f_2_1 f_2_2
   | (Lit _ | Neg _ | Conj _), Disj (f_1', f_2') ->
-      normalize_disjs (normalize_formula f_1 :: acc) f_1' f_2'
+    normalize_disjs (normalize_formula f_1 :: acc) f_1' f_2'
   | Disj (f_1', f_2'), (Lit _ | Neg _ | Conj _) ->
-      normalize_formula f_2 :: normalize_disjs acc f_1' f_2'
+    normalize_formula f_2 :: normalize_disjs acc f_1' f_2'
   | _ -> normalize_formula f_2 :: normalize_formula f_1 :: acc
 
 and normalize_formula = function
@@ -76,25 +76,25 @@ let string_of_formula =
     | Lit c -> f (Char.escaped c)
     | Neg c -> f ("!" ^ Char.escaped c)
     | Conj (f_1, f_2) ->
-        aux true false
-          (fun s_1 ->
-            aux true false
-              (fun s_2 ->
+      aux true false
+        (fun s_1 ->
+           aux true false
+             (fun s_2 ->
                 f
                   (if conj then s_1 ^ " & " ^ s_2
-                  else "(" ^ s_1 ^ " & " ^ s_2 ^ ")"))
-              f_2)
-          f_1
+                   else "(" ^ s_1 ^ " & " ^ s_2 ^ ")"))
+             f_2)
+        f_1
     | Disj (f_1, f_2) ->
-        aux false true
-          (fun s_1 ->
-            aux false true
-              (fun s_2 ->
+      aux false true
+        (fun s_1 ->
+           aux false true
+             (fun s_2 ->
                 f
                   (if disj then s_1 ^ " | " ^ s_2
-                  else "(" ^ s_1 ^ " | " ^ s_2 ^ ")"))
-              f_2)
-          f_1
+                   else "(" ^ s_1 ^ " | " ^ s_2 ^ ")"))
+             f_2)
+        f_1
   in
   aux false false (fun x -> x)
 
@@ -123,34 +123,58 @@ let criaTabelaVerdade k =
   done;
   tabela;;
 
-(* Contador de linhas na tabela, cuja f é 1 *)
-let contadorParcelas (tabela: int array array) (k: float) : int =
+(* Contador de linhas na tabela, cuja f é 1 ou 0, FND e FNC, respetivamente *)
+let contadorParcelas (tabela: int array array) (k: float) (forma: string): int =
   let k_inteiro = int_of_float (k) in
   let len1 = Array.length tabela in
   let countlinhas = ref 0 in
   for i = 0 to (len1 -1 ) do
-    if tabela.(i).(k_inteiro) == 1 then
-        countlinhas := !countlinhas + 1
+    if forma = "FND" then (
+      if tabela.(i).(k_inteiro) == 1 then (
+        countlinhas := !countlinhas + 1)
+      else 
+      if tabela.(i).(k_inteiro) == 0  then (
+        countlinhas := !countlinhas + 0)
+    )
+    else (
+      if forma = "FNC" then (
+        if tabela.(i).(k_inteiro) == 0 then (
+          countlinhas := !countlinhas + 1)
+        else 
+        if tabela.(i).(k_inteiro) == 1  then (
+          countlinhas := !countlinhas + 0)
+      )
+    )
   done;
   !countlinhas;;
 
 
-let tabela_seletiva (tabela: int array array) (k: float) (len_tabelaseletiva: int): (int array array) =
+let tabela_seletiva (tabela: int array array) (k: float) (len_tabelaseletiva: int) (forma: string): (int array array) =
   let k_inteiro = int_of_float (k) in
   let arraySeletivo = Array.init (len_tabelaseletiva) (fun i -> Array.make k_inteiro 0) in
   let len_tabela = Array.length tabela in
   let incrementador = ref 0 in
   for i = 0 to (len_tabela - 1) do
-    if tabela.(i).(k_inteiro) == 1 then  
+    if forma = "FND" then (
+      if tabela.(i).(k_inteiro) == 1 then  
         (for j = 0 to (k_inteiro-1) do
-        arraySeletivo.(!incrementador).(j) <- tabela.(i).(j);
-        done;
-    incrementador := !incrementador + 1)
+           arraySeletivo.(!incrementador).(j) <- tabela.(i).(j);
+         done;
+         incrementador := !incrementador + 1))
+    else (
+      if forma = "FNC" then (
+        if tabela.(i).(k_inteiro) == 0 then  
+        (for j = 0 to (k_inteiro-1) do
+           arraySeletivo.(!incrementador).(j) <- tabela.(i).(j);
+         done;
+         incrementador := !incrementador + 1)
+      )
+    )
   done;
   arraySeletivo;;
 
 
 let k = read_float();;
 let tabelaVerdade = criaTabelaVerdade k;;
-tabela_seletiva tabelaVerdade k (contadorParcelas tabelaVerdade k);;
+tabela_seletiva tabelaVerdade k (contadorParcelas tabelaVerdade k "FND") "FND";;
 
