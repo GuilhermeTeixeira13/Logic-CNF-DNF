@@ -203,9 +203,32 @@ let conjugaLista (lista: formula list) : formula =
   let f = List.fold_left conjugar (List.hd lista) listaSemPrimeiroElemento in
   f;;
 
+let disjuncaoLista (lista: formula list) : formula =
+  let disjuncao a b = Disj(a,b) in
+  let listaSemPrimeiroElemento = List.tl lista in 
+  let f = List.fold_left disjuncao (List.hd lista) listaSemPrimeiroElemento in
+  f;;
+
+let criaArrayParcelas tabela forma =
+  let linhasTabela = Array.length tabela in
+  let arrayParcelas1D = Array.make linhasTabela (Lit 'a') in
+  for posTabela = 0 to (linhasTabela-1) do
+    if(forma = "FND") then (
+      arrayParcelas1D.(posTabela) <- conjugaLista (Array.to_list (tabela.(posTabela)));
+    )
+    else (
+      arrayParcelas1D.(posTabela) <- disjuncaoLista (Array.to_list (tabela.(posTabela)));
+    )  
+    done;
+  arrayParcelas1D;;
+
 let k = read_float();;
 let tabelaVerdade = criaTabelaVerdade k;;
 let tabelaSeletivaFND = tabela_seletiva tabelaVerdade k (contadorParcelas tabelaVerdade k "FND") "FND";;
 let tabelaSeletivaFNC = tabela_seletiva tabelaVerdade k (contadorParcelas tabelaVerdade k "FNC") "FNC";;
 let tabelaLetrasFND = constroiTabelaLetras tabelaSeletivaFND "FND";;
-let tabelaLetrasFNC = constroiTabelaLetras tabelaSeletivaFND "FNC";;
+let tabelaLetrasFNC = constroiTabelaLetras tabelaSeletivaFNC "FNC";;
+let arrayParcelasFND = (criaArrayParcelas tabelaLetrasFND "FND");;
+let arrayParcelasFNC = (criaArrayParcelas tabelaLetrasFNC "FNC");;
+print_formula (disjuncaoLista (Array.to_list arrayParcelasFND));;
+print_formula (conjugaLista (Array.to_list arrayParcelasFNC));;
