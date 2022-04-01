@@ -126,16 +126,23 @@ let criaTabelaVerdade k =
 
 let inList a l = List.mem a l;;
 
-let tabela_valor1 tabela k =
+let tabela_valor1 tabela k forma =
   let totalLinhas = int_of_float (2. ** k) in
   let numElementosLinha = int_of_float (k +. 1.) in
   let cont = ref 0 in
   let positions = ref [] in
   let () =  
     for posTabela = 0 to (totalLinhas-1) do
-      if(tabela.(posTabela).(numElementosLinha-1) == 1) then (
-        cont:=!cont+1;
-        positions := !positions @ [posTabela];
+      if(forma = "FND") then (
+        if(tabela.(posTabela).(numElementosLinha-1) == 1) then (
+          cont:=!cont+1;
+          positions := !positions @ [posTabela];
+        )
+      ) else (
+        if(tabela.(posTabela).(numElementosLinha-1) == 0) then (
+          cont:=!cont+1;
+          positions := !positions @ [posTabela];
+        )
       )
     done;
   in
@@ -143,7 +150,9 @@ let tabela_valor1 tabela k =
   let pos = ref 0 in
   for posTabela = 0 to (totalLinhas-1) do (* 0 a 7 *)
     if((inList posTabela !positions) == (true)) then (
-        tabelaReduzida.(!pos) <- tabela.(posTabela);
+        for posLinha = 0 to (numElementosLinha-2) do
+          tabelaReduzida.(!pos).(posLinha) <- tabela.(posTabela).(posLinha);
+        done;
         pos:=!pos+1;
     )
   done;
