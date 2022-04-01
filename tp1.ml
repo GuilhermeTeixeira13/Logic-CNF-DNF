@@ -122,22 +122,33 @@ let criaTabelaVerdade k =
     tabela.(i) <- (stdinLineToArray (read_line()));
   done;
   tabela;;
-  
 
-
-let tabela_valor1 (tabela: int array array) (k: float): (int array array) =
+(* Contador de linhas na tabela, cuja f é 1 *)
+let contadorParcelas (tabela: int array array) (k: float) : int =
   let k_inteiro = int_of_float (k) in
-  let newArray = Array.init (Array.length tabela) (fun i -> Array.make k_inteiro 0) in
   let len1 = Array.length tabela in
-  for i = 0 to (len1 - 1) do
-    if tabela.(i).(k_inteiro) == 1 then  
-      (for j = 0 to (k_inteiro - 1) do
-        newArray.(i).(j) <- tabela.(i).(j);
-        done;)
+  let countlinhas = ref 0 in
+  for i = 0 to (len1 -1 ) do
+    if tabela.(i).(k_inteiro) == 1 then
+        countlinhas := !countlinhas + 1
   done;
-  newArray;;
+  !countlinhas;;
+
+
+let tabela_seletiva (tabela: int array array) (k: float) (len_tabelaseletiva: int): (int array array) =
+  let k_inteiro = int_of_float (k) in
+  let arraySeletivo = Array.init (len_tabelaseletiva) (fun i -> Array.make k_inteiro 0) in
+  let len_tabela = Array.length tabela in
+  let incrementador = ref 0 in
+  for i = 0 to (len_tabela - 1) do
+    if tabela.(i).(k_inteiro) == 1 then  
+        (arraySeletivo.(!incrementador) <- tabela.(i));
+        incrementador := !incrementador + 1
+  done;
+  arraySeletivo;;
+
 
 let k = read_float();;
 let tabelaVerdade = criaTabelaVerdade k;;
-tabela_valor1 tabelaVerdade k;;
+tabela_seletiva tabelaVerdade k (contadorParcelas tabelaVerdade k);;
 
