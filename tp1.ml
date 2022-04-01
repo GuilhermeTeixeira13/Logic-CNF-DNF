@@ -142,8 +142,10 @@ let tabela_seletiva (tabela: int array array) (k: float) (len_tabelaseletiva: in
   let incrementador = ref 0 in
   for i = 0 to (len_tabela - 1) do
     if tabela.(i).(k_inteiro) == 1 then  
-        (arraySeletivo.(!incrementador) <- tabela.(i));
-        incrementador := !incrementador + 1
+        (for j = 0 to (k_inteiro-1) do
+        arraySeletivo.(!incrementador).(j) <- tabela.(i).(j);
+        done;
+    incrementador := !incrementador + 1)
   done;
   arraySeletivo;;
 
