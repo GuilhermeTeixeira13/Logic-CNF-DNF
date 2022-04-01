@@ -1,4 +1,5 @@
 open Scanf;;
+open Printf;;
 
 (* Cabeçalho a incluir *)
 
@@ -122,6 +123,32 @@ let criaTabelaVerdade k =
     tabela.(i) <- (stdinLineToArray (read_line()));
   done;
   tabela;;
+
+let inList a l = List.mem a l;;
+
+let tabela_valor1 tabela k =
+  let totalLinhas = int_of_float (2. ** k) in
+  let numElementosLinha = int_of_float (k +. 1.) in
+  let cont = ref 0 in
+  let positions = ref [] in
+  let () =  
+    for posTabela = 0 to (totalLinhas-1) do
+      if(tabela.(posTabela).(numElementosLinha-1) == 1) then (
+        cont:=!cont+1;
+        positions := !positions @ [posTabela];
+      )
+    done;
+  in
+  let tabelaReduzida = Array.init !cont (fun i -> Array.make (numElementosLinha-1) 0) in (* array grande tam 3 com pequenos tam 3 *)
+  let pos = ref 0 in
+  for posTabela = 0 to (totalLinhas-1) do (* 0 a 7 *)
+    if((inList posTabela !positions) == (true)) then (
+        tabelaReduzida.(!pos) <- tabela.(posTabela);
+        pos:=!pos+1;
+    )
+  done;
+  tabelaReduzida;;
+  
 
 let constroiTabelaLetras tabelaDeVars forma =
   let letras = [|'a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'; 'k'; 'l'|] in
