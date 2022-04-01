@@ -162,8 +162,8 @@ let tabela_valor1 tabela k forma =
 let constroiTabelaLetras tabelaDeVars forma =
   let letras = [|'a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'; 'k'; 'l'|] in
   let tabelaLetras = Array.init (Array.length tabelaDeVars) (fun i -> Array.make (Array.length tabelaDeVars.(0)) (Lit 'a')) in
-  for posTabela = 0 to (Array.length tabelaDeVars - 1) do
-    for posLinha = 0 to (Array.length tabelaDeVars.(0)) do
+  for posTabela = 0 to ((Array.length tabelaDeVars) - 1) do
+    for posLinha = 0 to (Array.length tabelaDeVars.(0)-1) do
       if forma = "FND" then (
         if(tabelaDeVars.(posTabela).(posLinha) == 1) then (
           tabelaLetras.(posTabela).(posLinha) <- Lit letras.(posLinha)
