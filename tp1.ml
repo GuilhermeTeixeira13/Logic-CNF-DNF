@@ -113,7 +113,6 @@ let stdinLineToArray s =
     | End_of_file -> acc
   in Array.of_list (List.rev (do_parse []));;
 
-
 (* Feito por nós *)
 let criaTabelaVerdade k =
   let totalLinhas = int_of_float (2. ** k) in
@@ -126,43 +125,19 @@ let criaTabelaVerdade k =
   
 
 
-let tabela_valor (tabela: int array array) (k: float): (int array array) =
+let tabela_valor1 (tabela: int array array) (k: float): (int array array) =
   let k_inteiro = int_of_float (k) in
-  let arrayRegra = Array.init (Array.length tabela) (fun i -> Array.make k_inteiro 0) in
+  let newArray = Array.init (Array.length tabela) (fun i -> Array.make k_inteiro 0) in
   let len1 = Array.length tabela in
   for i = 0 to (len1 - 1) do
     if tabela.(i).(k_inteiro) == 1 then  
       (for j = 0 to (k_inteiro - 1) do
-        arrayRegra.(i).(j) <- tabela.(i).(j);
+        newArray.(i).(j) <- tabela.(i).(j);
         done;)
   done;
-  arrayRegra;;
-
-
-let tabela_valorC (arrayRegra : int array array) (k: float): (int array array) = 
-  let k_inteiro = int_of_float (k) in
-  let len1 = Array.length arrayRegra in
-  let count = ref 0 in
-  for i = 0 to (len1 -1 ) do
-    for j = 0 to (k_inteiro - 1) do
-      if arrayRegra.(i) = [|0;0|] then
-        count := !count + 1
-    done;
-  done;
-  let len2 = len1 - (!count) in
-  let arrayRegraC = Array.init len2 (fun i -> Array.make (k_inteiro) 0) in
-  for i = 0 to (len1 - 1) do
-    let count1 = ref 0 in
-      if arrayRegra.(i) != [|0;0|] then
-        (arrayRegraC.(!count1) <- arrayRegra.(i));
-        count1 := !count1 + 1
-  done;
-  arrayRegraC;;
+  newArray;;
 
 let k = read_float();;
 let tabelaVerdade = criaTabelaVerdade k;;
-let tabela = tabela_valor tabelaVerdade k;;
-tabela_valorC tabela k;;
-
-
+tabela_valor1 tabelaVerdade k;;
 
