@@ -148,7 +148,6 @@ let contadorParcelas (tabela: int array array) (k: float) (forma: string): int =
   done;
   !countlinhas;;
 
-
 let tabela_seletiva (tabela: int array array) (k: float) (len_tabelaseletiva: int) (forma: string): (int array array) =
   let k_inteiro = int_of_float (k) in
   let arraySeletivo = Array.init (len_tabelaseletiva) (fun i -> Array.make k_inteiro 0) in
@@ -173,8 +172,33 @@ let tabela_seletiva (tabela: int array array) (k: float) (len_tabelaseletiva: in
   done;
   arraySeletivo;;
 
+let constroiTabelaLetras tabelaDeVars forma =
+  let letras = [|'a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'; 'k'; 'l'|] in
+  let tabelaLetras = Array.init (Array.length tabelaDeVars) (fun i -> Array.make (Array.length tabelaDeVars.(0)) (Lit 'a')) in
+  for posTabela = 0 to ((Array.length tabelaDeVars) - 1) do
+    for posLinha = 0 to (Array.length tabelaDeVars.(0)-1) do
+      if forma = "FND" then (
+        if(tabelaDeVars.(posTabela).(posLinha) == 1) then (
+          tabelaLetras.(posTabela).(posLinha) <- Lit letras.(posLinha)
+        )
+        else (
+          tabelaLetras.(posTabela).(posLinha) <- Neg letras.(posLinha)
+        )
+      ) else (
+        if(tabelaDeVars.(posTabela).(posLinha) == 0) then (
+          tabelaLetras.(posTabela).(posLinha) <- Lit letras.(posLinha)
+        )
+        else (
+          tabelaLetras.(posTabela).(posLinha) <- Neg letras.(posLinha)
+        )
+      )        
+    done;
+  done;
+  tabelaLetras;;
 
 let k = read_float();;
 let tabelaVerdade = criaTabelaVerdade k;;
-tabela_seletiva tabelaVerdade k (contadorParcelas tabelaVerdade k "FND") "FND";;
-
+let tabelaSeletivaFND = tabela_seletiva tabelaVerdade k (contadorParcelas tabelaVerdade k "FND") "FND";;
+let tabelaSeletivaFNC = tabela_seletiva tabelaVerdade k (contadorParcelas tabelaVerdade k "FNC") "FNC";;
+let tabelaLetrasFND = constroiTabelaLetras tabelaSeletivaFND "FND";;
+let tabelaLetrasFNC = constroiTabelaLetras tabelaSeletivaFND "FNC";;
