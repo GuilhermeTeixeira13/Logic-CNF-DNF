@@ -196,11 +196,25 @@ let constroiTabelaLetras tabelaDeVars forma =
   done;
   tabelaLetras;;
 
+
+
+
+
+
+
 (* Dada uma lista de fórmulas, conjuga todos os elementos da lista e devolve a fórmula correspondente *)
-let conjugaLista (lista: formula list) : formula =
-  let conjugar a b = Conj(a,b) in
+let disjuntaLista (lista: formula list) : formula =
+  let disjuntar a b = Disj(a,b) in
   let listaSemPrimeiroElemento = List.tl lista in 
-  let f = List.fold_left conjugar (List.hd lista) listaSemPrimeiroElemento in
+  let f = List.fold_left disjuntar (List.hd lista) listaSemPrimeiroElemento in
+  f;;
+
+
+(* Dada uma lista de fórmulas, conjuga todos os elementos da lista e devolve a fórmula correspondente *)
+let disjuntaLista (lista: formula list) : formula =
+  let disjuntar a b = Disj(a,b) in
+  let listaSemPrimeiroElemento = List.tl lista in 
+  let f = List.fold_left disjuntar (List.hd lista) listaSemPrimeiroElemento in
   f;;
 
 let k = read_float();;
