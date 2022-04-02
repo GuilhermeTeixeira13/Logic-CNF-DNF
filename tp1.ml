@@ -245,7 +245,7 @@ let tabelaSeletivaFNC = tabela_seletiva tabelaVerdade k (contadorParcelas tabela
 let tabelaLetrasFND = constroiTabelaLetras tabelaSeletivaFND "FND";;
 let tabelaLetrasFNC = constroiTabelaLetras tabelaSeletivaFND "FNC";;
 let armazena_expressoesarrayFND = armazena_expressoesarray tabelaLetrasFND "FND";;
-let armazena_expressoesarrayFNC = armazena_expressoesarray tabelaLetrasFND "FNC";;
+let armazena_expressoesarrayFNC = armazena_expressoesarray tabelaLetrasFNC "FNC";;
 let expressaoFND = expressao armazena_expressoesarrayFND "FND";;
 let expressaoFNC = expressao armazena_expressoesarrayFNC "FNC";;
 print_formula expressaoFND;;
