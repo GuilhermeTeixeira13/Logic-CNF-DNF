@@ -199,9 +199,9 @@ let constroiTabelaLetras tabelaDeVars forma =
 
 (* Dada uma lista de fórmulas, conjuga todos os elementos da lista e devolve a fórmula correspondente *)
 let conjuntaLista (lista: formula list) : formula =
-  let disjuntar a b = Conj(a,b) in
+  let conjuntar a b = Conj(a,b) in
   let listaSemPrimeiroElemento = List.tl lista in 
-  let f = List.fold_left disjuntar (List.hd lista) listaSemPrimeiroElemento in
+  let f = List.fold_left conjuntar (List.hd lista) listaSemPrimeiroElemento in
   f;;
 
 (* Dada uma lista de fórmulas, conjuga todos os elementos da lista e devolve a fórmula correspondente *)
@@ -247,6 +247,6 @@ let tabelaLetrasFNC = constroiTabelaLetras tabelaSeletivaFND "FNC";;
 let armazena_expressoesarrayFND = armazena_expressoesarray tabelaLetrasFND "FND";;
 let armazena_expressoesarrayFNC = armazena_expressoesarray tabelaLetrasFND "FNC";;
 let expressaoFND = expressao armazena_expressoesarrayFND "FND";;
-let expressaoFNC = expressao armazena_expressoesarrayFND "FNC";;
+let expressaoFNC = expressao armazena_expressoesarrayFNC "FNC";;
 print_formula expressaoFND;;
 print_formula expressaoFNC;;
