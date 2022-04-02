@@ -197,10 +197,12 @@ let constroiTabelaLetras tabelaDeVars forma =
   tabelaLetras;;
 
 
-
-
-
-
+(* Dada uma lista de fórmulas, conjuga todos os elementos da lista e devolve a fórmula correspondente *)
+let conjuntaLista (lista: formula list) : formula =
+  let disjuntar a b = Conj(a,b) in
+  let listaSemPrimeiroElemento = List.tl lista in 
+  let f = List.fold_left disjuntar (List.hd lista) listaSemPrimeiroElemento in
+  f;;
 
 (* Dada uma lista de fórmulas, conjuga todos os elementos da lista e devolve a fórmula correspondente *)
 let disjuntaLista (lista: formula list) : formula =
@@ -210,12 +212,31 @@ let disjuntaLista (lista: formula list) : formula =
   f;;
 
 
-(* Dada uma lista de fórmulas, conjuga todos os elementos da lista e devolve a fórmula correspondente *)
-let disjuntaLista (lista: formula list) : formula =
-  let disjuntar a b = Disj(a,b) in
-  let listaSemPrimeiroElemento = List.tl lista in 
-  let f = List.fold_left disjuntar (List.hd lista) listaSemPrimeiroElemento in
-  f;;
+let armazena_expressoesarray (tabelaLetras: formula array array) (forma: string): (formula array) =
+  let len_tabelaletras = Array.length tabelaLetras in
+  let array_expressoes = Array.make len_tabelaletras (Lit 'a') in
+  for i = 0 to (len_tabelaletras - 1) do
+    if forma = "FND" then (
+    array_expressoes.(i) <- (conjuntaLista(Array.to_list tabelaLetras.(i)));
+    )
+    else (
+      if forma = "FNC" then (
+        array_expressoes.(i) <- (disjuntaLista(Array.to_list tabelaLetras.(i)));
+      )
+    )
+  done;
+  array_expressoes;;
+
+
+let expressao (array_expressoes: formula array) (forma: string): (formula) = 
+  let conv_list = Array.to_list (array_expressoes) in
+  if forma = "FND" then
+    disjuntaLista(conv_list)
+  else 
+    conjuntaLista(conv_list);;
+
+    
+
 
 let k = read_float();;
 let tabelaVerdade = criaTabelaVerdade k;;
@@ -223,3 +244,9 @@ let tabelaSeletivaFND = tabela_seletiva tabelaVerdade k (contadorParcelas tabela
 let tabelaSeletivaFNC = tabela_seletiva tabelaVerdade k (contadorParcelas tabelaVerdade k "FNC") "FNC";;
 let tabelaLetrasFND = constroiTabelaLetras tabelaSeletivaFND "FND";;
 let tabelaLetrasFNC = constroiTabelaLetras tabelaSeletivaFND "FNC";;
+let armazena_expressoesarrayFND = armazena_expressoesarray tabelaLetrasFND "FND";;
+let armazena_expressoesarrayFNC = armazena_expressoesarray tabelaLetrasFND "FNC";;
+let expressaoFND = expressao armazena_expressoesarrayFND "FND";;
+let expressaoFNC = expressao armazena_expressoesarrayFND "FNC";;
+print_formula expressaoFND;;
+print_formula expressaoFNC;;
