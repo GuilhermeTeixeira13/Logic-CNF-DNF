@@ -102,7 +102,15 @@ let print_formula f = normalize_formula f |> string_of_formula |> print_endline
 
 (* Escreva a solução do problema a seguir *)
 
-(* https://stackoverflow.com/questions/39335469/how-to-use-ocaml-scanf-module-to-parse-a-string-containing-integers-separated-by *)
+
+(* 
+  Input:
+    . s -> string correspondente a uma linha que contém vários inteiros.
+
+  Output:
+    . (array int) -> Array com os inteiros presentes na string s.
+  Fonte: https://stackoverflow.com/questions/39335469/how-to-use-ocaml-scanf-module-to-parse-a-string-containing-integers-separated-by 
+*)
 let stdinLineToArray s =
   let stream = (Scanning.from_string s) in
   let rec do_parse acc =
@@ -172,6 +180,25 @@ let tabela_seletiva (tabela: int array array) (k: float) (len_tabelaseletiva: in
   done;
   arraySeletivo;;
 
+(* 
+  Input: 
+    . tabelaVars -> (Array array int) (sem o resultado da função, pois não interessa para o caso ),
+    correspondente às linhas da tabela da verdade onde o resultado da função é 1 (caso FND), ou 0 (caso FNC).
+    . forma -> Uma dada string "FNC" ou "FND".
+
+  Funcionamento:
+    É criado um (array array formula), chamado tabelaLetras, do mesmo tamanho do (array array int)
+    O algoritmo percorre o (array array int) posição a posição e:
+      . Caso a forma seja FND:
+        . Se encontrou um 1, então é adicionado à tabelaLetras o Lit do char correspondente à variável. (x1->'a', x2->'b' ...)
+        . Se encontrou um 0, então é adicionado à tabelaLetras o Neg do char correspondente à variável.
+      . Caso a forma seja FNC:
+        . Se encontrou um 1, então é adicionado à tabelaLetras o Neg do char correspondente à variável.
+        . Se encontrou um 0, então é adicionado à tabelaLetras o Lit do char correspondente à variável.
+
+  OUTPUT:
+    . tabelaDeLetras (Array array formula)
+*)
 let constroiTabelaLetras tabelaDeVars forma =
   let letras = [|'a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'; 'k'; 'l'|] in
   let tabelaLetras = Array.init (Array.length tabelaDeVars) (fun i -> Array.make (Array.length tabelaDeVars.(0)) (Lit 'a')) in
