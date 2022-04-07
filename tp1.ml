@@ -373,8 +373,8 @@ let k = read_float();;
 
 let tabelaVerdade = criaTabelaVerdade k;;
 
-let tabelaSeletivaFND = tabela_seletiva tabelaVerdade k (contadorParcelas tabelaVerdade k "FND") "FND";;
-let tabelaSeletivaFNC = tabela_seletiva tabelaVerdade k (contadorParcelas tabelaVerdade k "FNC") "FNC";;
+let tabelaSeletivaFND = tabela_seletiva tabelaVerdade k (contadorLinhasComValorf tabelaVerdade k "FND") "FND";;
+let tabelaSeletivaFNC = tabela_seletiva tabelaVerdade k (contadorLinhasComValorf tabelaVerdade k "FNC") "FNC";;
 
 let tabelaLetrasFND = constroiTabelaLetras tabelaSeletivaFND "FND";;
 let tabelaLetrasFNC = constroiTabelaLetras tabelaSeletivaFNC "FNC";;
