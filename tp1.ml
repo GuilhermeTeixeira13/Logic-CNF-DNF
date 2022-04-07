@@ -321,13 +321,70 @@ let tabelaSeletivaFNC = tabela_seletiva tabelaVerdade k (contadorParcelas tabela
 let tabelaLetrasFND = constroiTabelaLetras tabelaSeletivaFND "FND";;
 let tabelaLetrasFNC = constroiTabelaLetras tabelaSeletivaFNC "FNC";;
 
-let arrayParcelasFND = formulasDasLinhas tabelaLetrasFND "FND";;
-let arrayParcelasFNC = formulasDasLinhas tabelaLetrasFNC "FNC";;
+let linhasFormuladasFND = formulasDasLinhas tabelaLetrasFND "FND";;
+let linhasFormuladasFNC = formulasDasLinhas tabelaLetrasFNC "FNC";;
 
-let formulaFinalFND = disjuncaoLista (Array.to_list arrayParcelasFND);;
-let formulaFinalFNC = conjugaLista (Array.to_list arrayParcelasFNC);;
+let formulaFinalFND = disjuncaoLista (Array.to_list linhasFormuladasFND);;
+let formulaFinalFNC = conjugaLista (Array.to_list linhasFormuladasFNC);;
 
 print_formula formulaFinalFND;;
 print_formula formulaFinalFNC;;
 
 (* EXEMPLO DE FUNCIONAMENTO *)
+
+(*
+INPUT
+3
+0 0 0 1
+0 0 1 0
+0 1 0 0
+0 1 1 1
+1 0 0 0
+1 0 1 0
+1 1 0 1
+1 1 1 1
+
+-------------------------------------------------------------------
+PARA FND:
+
+tabelaVerdade: 
+[|[|0; 0; 0; 1|]; [|0; 0; 1; 0|]; [|0; 1; 0; 0|]; [|0; 1; 1; 1|]; [|1; 0; 0; 0|]; [|1; 0; 1; 0|]; [|1; 1; 0; 1|]; [|1; 1; 1; 1|]|]
+
+tabelaSeletivaFND:
+[|[|0; 0; 0; 1|]; [|0; 1; 1; 1|]; [|1; 1; 0; 1|]; [|1; 1; 1; 1|]|]
+
+tabelaLetrasFND:
+[|[|Neg 'a'; Neg 'b'; Neg 'c'|]; [|Neg 'a'; Lit 'b'; Lit 'c'|]; [|Lit 'a'; Lit 'b'; Neg 'c'|]; [|Lit 'a'; Lit 'b'; Lit 'c'|]|]
+
+linhasFormuladasFND:
+[|[|Conj(Conj(Neg 'a', Neg 'b'), Neg 'c')|]; [|Conj(Conj(Neg 'a', Lit 'b'), Lit 'c')|]; [|Conj(Conj(Lit 'a', Lit 'b'), Neg 'c')|]; [|Conj(Conj(Lit 'a', Lit 'b'), Lit 'c')|]|]
+
+formulaFinalFND:
+Disj(Disj(Disj (Conj (Conj (Neg 'a', Neg 'b'), Neg 'c'),Conj (Conj (Neg 'a', Lit 'b'), Lit 'c')),Conj (Conj (Lit 'a', Lit 'b'), Neg 'c')), Conj (Conj (Lit 'a', Lit 'b'), Lit 'c'))
+
+print_formula formulaFinalFND:
+((!a & b & c) | (!a & !b & !c) | (a & b & c) | (a & b & !c))
+
+-------------------------------------------------------------------
+PARA FNC:
+
+tabelaVerdade: 
+[|[|0; 0; 0; 1|]; [|0; 0; 1; 0|]; [|0; 1; 0; 0|]; [|0; 1; 1; 1|]; [|1; 0; 0; 0|]; [|1; 0; 1; 0|]; [|1; 1; 0; 1|]; [|1; 1; 1; 1|]|]
+
+tabelaSeletivaFNC:
+[|[|0; 0; 1|]; [|0; 1; 0|]; [|1; 0; 0|]; [|1; 0; 1|]|]
+
+tabelaLetrasFNC:
+[|[|Lit 'a'; Lit 'b'; Neg 'c'|]; [|Lit 'a'; Neg 'b'; Lit 'c'|]; [|Neg 'a'; Lit 'b'; Lit 'c'|]; [|Neg 'a'; Lit 'b'; Neg 'c'|]|]
+
+linhasFormuladasFNC:
+[|Disj (Disj (Lit 'a', Lit 'b'), Neg 'c'); Disj (Disj (Lit 'a', Neg 'b'), Lit 'c'); Disj (Disj (Neg 'a', Lit 'b'), Lit 'c'); Disj (Disj (Neg 'a', Lit 'b'), Neg 'c')|]
+
+formulaFinalFNC:
+Conj(Conj(Conj (Disj (Disj (Lit 'a', Lit 'b'), Neg 'c'), Disj(Disj (Lit 'a', Neg 'b'), Lit 'c')), Disj (Disj (Neg 'a', Lit 'b'), Lit 'c')), Disj (Disj (Neg 'a', Lit 'b'), Neg 'c'))
+
+print_formula formulaFinalFNC:
+((!a | b | c) & (!a | b | !c) & (a | b | !c) & (a | !b | c))
+
+-------------------------------------------------------------------
+*)
