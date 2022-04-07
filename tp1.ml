@@ -109,6 +109,7 @@ let print_formula f = normalize_formula f |> string_of_formula |> print_endline
 
   Output:
     . (array int) -> Array com os inteiros presentes na string s.
+
   Fonte: https://stackoverflow.com/questions/39335469/how-to-use-ocaml-scanf-module-to-parse-a-string-containing-integers-separated-by 
 *)
 let stdinLineToArray s =
@@ -182,12 +183,12 @@ let tabela_seletiva (tabela: int array array) (k: float) (len_tabelaseletiva: in
 
 (* 
   Input: 
-    . tabelaVars -> (Array array int) (sem o resultado da função, pois não interessa para o caso ),
+    . tabelaDeVars -> (int array array) (tabela sem o resultado da função, pois não interessa para o caso),
     correspondente às linhas da tabela da verdade onde o resultado da função é 1 (caso FND), ou 0 (caso FNC).
     . forma -> Uma dada string "FNC" ou "FND".
 
   Funcionamento:
-    É criado um (array array formula), chamado tabelaLetras, do mesmo tamanho do (array array int)
+    É criado um (formula array array), chamado tabelaLetras, do mesmo tamanho do (array array int)
     O algoritmo percorre o (array array int) posição a posição e:
       . Caso a forma seja FND:
         . Se encontrou um 1, então é adicionado à tabelaLetras o Lit do char correspondente à variável. (x1->'a', x2->'b' ...)
@@ -197,67 +198,136 @@ let tabela_seletiva (tabela: int array array) (k: float) (len_tabelaseletiva: in
         . Se encontrou um 0, então é adicionado à tabelaLetras o Lit do char correspondente à variável.
 
   OUTPUT:
-    . tabelaDeLetras (Array array formula)
+    . tabelaDeLetras (formula array array)
 *)
 let constroiTabelaLetras tabelaDeVars forma =
   let letras = [|'a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'; 'k'; 'l'|] in
-  let tabelaLetras = Array.init (Array.length tabelaDeVars) (fun i -> Array.make (Array.length tabelaDeVars.(0)) (Lit 'a')) in
-  for posTabela = 0 to ((Array.length tabelaDeVars) - 1) do
-    for posLinha = 0 to (Array.length tabelaDeVars.(0)-1) do
+  let totalLinhas = Array.length tabelaDeVars in
+  let totalColunas = Array.length tabelaDeVars.(0) in
+  let tabelaLetras = Array.init (totalLinhas) (fun i -> Array.make (totalColunas) (Lit 'a')) in
+  for linha = 0 to (totalLinhas - 1) do
+    for coluna = 0 to (totalColunas - 1) do
       if forma = "FND" then (
-        if(tabelaDeVars.(posTabela).(posLinha) == 1) then (
-          tabelaLetras.(posTabela).(posLinha) <- Lit letras.(posLinha)
+        if(tabelaDeVars.(linha).(coluna) == 1) then (
+          tabelaLetras.(linha).(coluna) <- Lit letras.(coluna)
         )
         else (
-          tabelaLetras.(posTabela).(posLinha) <- Neg letras.(posLinha)
+          tabelaLetras.(linha).(coluna) <- Neg letras.(coluna)
         )
       ) else (
-        if(tabelaDeVars.(posTabela).(posLinha) == 0) then (
-          tabelaLetras.(posTabela).(posLinha) <- Lit letras.(posLinha)
+        if(tabelaDeVars.(linha).(coluna) == 0) then (
+          tabelaLetras.(linha).(coluna) <- Lit letras.(coluna)
         )
         else (
-          tabelaLetras.(posTabela).(posLinha) <- Neg letras.(posLinha)
+          tabelaLetras.(linha).(coluna) <- Neg letras.(coluna)
         )
       )        
     done;
   done;
   tabelaLetras;;
 
-(* Dada uma lista de fórmulas, conjuga todos os elementos da lista e devolve a fórmula correspondente *)
+(*
+  Input: 
+    . lista -> (formula list) Lista de fórmulas que se prentende conjugar.
+
+  Funcionamento:
+    A lista é varrida e ao mesmo tempo conjugada, exemplo:
+
+    Dada uma lista de fórmulas, por exemplo: [Lit 'a', Lit 'b', Neg 'c'], o que o algoritmo faz é o seguinte:
+    
+    fold conjugar (Lit 'a') [Lit 'b', Neg 'c']
+    fold conjugar (conjugar Lit'a' Lit'b') [Neg'c']
+    fold conjugar (Conj(Lit'a', Lit'b')) [Neg 'c']
+    fold conjugar (conjugar Conj(Lit'a', Lit'b') Neg 'c') []
+    fold conjugar (Conj(Conj(Lit'a', Lit'b'), Neg 'c')) []
+
+    return formula -> Conj(Conj(Lit'a', Lit'b'), Neg 'c')
+
+  OUTPUT:
+    . formula -> (formula) correspondente à conjunção das fórmulas presentes na lista
+    passada como input.
+  
+  Fonte: Baseamo-nos no seguinte vídeo para elaborar um esboço de resolução do problema:
+  https://www.youtube.com/watch?v=Zq1QJ2QztgM
+*)
 let conjugaLista (lista: formula list) : formula =
   let conjugar a b = Conj(a,b) in
   let listaSemPrimeiroElemento = List.tl lista in 
-  let f = List.fold_left conjugar (List.hd lista) listaSemPrimeiroElemento in
+  let primeiroElementoLista = List.hd lista in
+  let f = List.fold_left conjugar primeiroElementoLista listaSemPrimeiroElemento in
   f;;
 
+(*
+  Input: 
+    . lista -> (formula list) Lista de fórmulas que se pretende disjuntar.
+
+  Funcionamento:
+    Igual à função anterior só que para a disjunção.
+
+  OUTPUT:
+    . formula -> (formula) correspondente à disjunção das fórmulas presentes na lista
+    passada como input.
+  
+  Fonte: Baseamo-nos no seguinte vídeo para elaborar um esboço de resolução do problema:
+  https://www.youtube.com/watch?v=Zq1QJ2QztgM
+*)
 let disjuncaoLista (lista: formula list) : formula =
   let disjuncao a b = Disj(a,b) in
   let listaSemPrimeiroElemento = List.tl lista in 
-  let f = List.fold_left disjuncao (List.hd lista) listaSemPrimeiroElemento in
+  let primeiroElementoLista = List.hd lista in
+  let f = List.fold_left disjuncao primeiroElementoLista listaSemPrimeiroElemento in
   f;;
 
-let criaArrayParcelas tabela forma =
-  let linhasTabela = Array.length tabela in
-  let arrayParcelas1D = Array.make linhasTabela (Lit 'a') in
+(*
+  Input: 
+    . tabelaDeLetras -> (formula array array) Tabela com os literais.
+    . forma -> Uma dada string "FNC" ou "FND".
+
+  Funcionamento:
+    . Caso a forma seja FND:
+      . Conjuga cada linha e guarda cada linha 'formulada' num array.
+    . Caso a forma seja FNC:
+      . Faz a disjunção de cada linha e guarda cada linha 'formulada' num array.
+
+  OUTPUT:
+    . linhasFormuladas -> (formula array) array em que cada elemento contém a fórmula
+    correspondente a uma linha da tabela.
+  
+  Fonte: Baseamo-nos no seguinte vídeo para elaborar um esboço de resolução do problema:
+  https://www.youtube.com/watch?v=Zq1QJ2QztgM
+*)
+let formulasDasLinhas tabelaDeLetras forma =
+  let linhasTabela = Array.length tabelaDeLetras in
+  let linhasFormuladas = Array.make linhasTabela (Lit 'a') in
   for posTabela = 0 to (linhasTabela-1) do
     if(forma = "FND") then (
-      arrayParcelas1D.(posTabela) <- conjugaLista (Array.to_list (tabela.(posTabela)));
+      linhasFormuladas.(posTabela) <- conjugaLista (Array.to_list (tabelaDeLetras.(posTabela)));
     )
     else (
-      arrayParcelas1D.(posTabela) <- disjuncaoLista (Array.to_list (tabela.(posTabela)));
+      linhasFormuladas.(posTabela) <- disjuncaoLista (Array.to_list (tabelaDeLetras.(posTabela)));
     )  
     done;
-  arrayParcelas1D;;
+  linhasFormuladas;;
+
+(* CORPO DO PROGRAMA *)
 
 let k = read_float();;
+
 let tabelaVerdade = criaTabelaVerdade k;;
+
 let tabelaSeletivaFND = tabela_seletiva tabelaVerdade k (contadorParcelas tabelaVerdade k "FND") "FND";;
 let tabelaSeletivaFNC = tabela_seletiva tabelaVerdade k (contadorParcelas tabelaVerdade k "FNC") "FNC";;
+
 let tabelaLetrasFND = constroiTabelaLetras tabelaSeletivaFND "FND";;
 let tabelaLetrasFNC = constroiTabelaLetras tabelaSeletivaFNC "FNC";;
-let arrayParcelasFND = (criaArrayParcelas tabelaLetrasFND "FND");;
-let arrayParcelasFNC = (criaArrayParcelas tabelaLetrasFNC "FNC");;
+
+let arrayParcelasFND = formulasDasLinhas tabelaLetrasFND "FND";;
+let arrayParcelasFNC = formulasDasLinhas tabelaLetrasFNC "FNC";;
+
 let formulaFinalFND = disjuncaoLista (Array.to_list arrayParcelasFND);;
 let formulaFinalFNC = conjugaLista (Array.to_list arrayParcelasFNC);;
+
 print_formula formulaFinalFND;;
 print_formula formulaFinalFNC;;
+
+(* EXEMPLO DE FUNCIONAMENTO *)
