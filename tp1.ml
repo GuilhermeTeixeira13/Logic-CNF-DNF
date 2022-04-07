@@ -160,12 +160,10 @@ let criaTabelaVerdade k =
     .O algoritmo percorre o array bi-dimensional, tabela, posição a posição e:
       . Caso a forma seja FND:
         . Se encontrou um 1, na posição "posvalorf", soma um ao contador "nlinhasvalorf"
-        . Se encontrou um 0, na posição "posvalorf", soma zero ao contador "nlinhasvalorf"
       . Caso a forma seja FNC:
         . Se encontrou um 1, na posição "posvalorf", soma 0 ao contador "nlinhasvalorf"
-        . Se encontrou um 0, na posição "posvalorf", soma 1 ao contador "nlinhasvalorf"
   Output:
-    . (int) -> Nº de arrays do array bi-dimensional, cuja última posição desses, é 1 ou 0. Queremos o nº de linhas que, em cada linha da tabela, a sua última coluna é 1 ou 0, caso seja, FND ou FNC, respetivamente.
+    . (int) -> Nº de arrays do array bi-dimensional, cuja última posição desses, é 1 ou 0. Queremos o nº de linhas que, em cada linha da tabela, a sua última coluna é 1 ou 0, caso seja FND ou FNC, respetivamente.
 *)
 
 let contadorLinhasComValorf (tabela: int array array) (posvalorffloat: float) (forma: string): int =
@@ -176,17 +174,11 @@ let contadorLinhasComValorf (tabela: int array array) (posvalorffloat: float) (f
     if forma = "FND" then (
       if tabela.(i).(posvalorf) == 1 then (
         nlinhasvalorf := !nlinhasvalorf + 1)
-      else 
-      if tabela.(i).(posvalorf) == 0  then (
-        nlinhasvalorf := !nlinhasvalorf + 0)
     )
     else (
       if forma = "FNC" then (
         if tabela.(i).(posvalorf) == 0 then (
           nlinhasvalorf := !nlinhasvalorf + 1)
-        else 
-        if tabela.(i).(posvalorf) == 1  then (
-          nlinhasvalorf := !nlinhasvalorf + 0)
       )
     )
   done;
