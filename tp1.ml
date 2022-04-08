@@ -163,9 +163,8 @@ let criaTabelaVerdade k =
   Output:
     . (int) -> Nº de arrays do array bi-dimensional, cuja última posição desses, é 1 ou 0. Queremos o nº de linhas que, em cada linha da tabela, a sua última coluna é 1 ou 0, caso seja FND ou FNC, respetivamente.
 *)
-let contadorLinhasComValorf tabela forma =
+let contadorLinhasComValorf tabela posvalorf forma =
   let totalLinhas = Array.length tabela in
-  let posvalorf = int_of_float (log(float_of_int totalLinhas)) in
   let nlinhasvalorf = ref 0 in
   for linha = 0 to (totalLinhas -1 ) do
     if (forma = "FND" && tabela.(linha).(posvalorf) == 1) 
@@ -199,9 +198,8 @@ let contadorLinhasComValorf tabela forma =
   Output:
     . (int array array) -> "arraySeletivo", que tem de tamanho o nº linhas que a função antecedora "contadorLinhasComValorf" retornou e armazena só arrays cujo f é 0 ou 1, sem esta última coluna f.
 *)
-let tabela_seletiva tabela nlinhasvalorf forma =
+let tabela_seletiva tabela posvalorf nlinhasvalorf forma =
   let totalLinhas = Array.length tabela in
-  let posvalorf = int_of_float (log(float_of_int totalLinhas)) in
   let arraySeletivo = Array.init (nlinhasvalorf) (fun i -> Array.make posvalorf 0) in
   let incrementador = ref 0 in
   for linha = 0 to (totalLinhas - 1) do
@@ -356,14 +354,14 @@ let k = read_int();;
 let tabelaVerdade = criaTabelaVerdade k;;
 
 (* Para FND *)
-let tabelaSeletivaFND = tabela_seletiva tabelaVerdade (contadorLinhasComValorf tabelaVerdade "FND") "FND";;
+let tabelaSeletivaFND = tabela_seletiva tabelaVerdade k (contadorLinhasComValorf tabelaVerdade k "FND") "FND";;
 let tabelaLetrasFND = constroiTabelaLetras tabelaSeletivaFND "FND";;
 let linhasFormuladasFND = formulasDasLinhas tabelaLetrasFND "FND";;
 let formulaFinalFND = disjuncaoLista (Array.to_list linhasFormuladasFND);;
 print_formula formulaFinalFND;;
 
 (* Para FNC *)
-let tabelaSeletivaFNC = tabela_seletiva tabelaVerdade (contadorLinhasComValorf tabelaVerdade "FNC") "FNC";;
+let tabelaSeletivaFNC = tabela_seletiva tabelaVerdade k (contadorLinhasComValorf tabelaVerdade k "FNC") "FNC";;
 let tabelaLetrasFNC = constroiTabelaLetras tabelaSeletivaFNC "FNC";;
 let linhasFormuladasFNC = formulasDasLinhas tabelaLetrasFNC "FNC";;
 let formulaFinalFNC = conjugaLista (Array.to_list linhasFormuladasFNC);;
