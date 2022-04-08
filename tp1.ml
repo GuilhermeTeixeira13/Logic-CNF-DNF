@@ -1,5 +1,4 @@
 open Scanf;;
-
 (* Cabeçalho a incluir *)
 
 type formula =
@@ -112,26 +111,24 @@ let print_formula f = normalize_formula f |> string_of_formula |> print_endline
 
   Fonte: https://stackoverflow.com/questions/39335469/how-to-use-ocaml-scanf-module-to-parse-a-string-containing-integers-separated-by 
 *)
-
 let stdinLineToArray s =
   let stream = (Scanning.from_string s) in
   let rec do_parse acc =
     try
-      do_parse (Scanf.bscanf stream " %d " (fun x -> x :: acc))
+      do_parse (Scanf.bscanf stream "%d " (fun x -> x :: acc))
     with
       Scan_failure _ -> acc
     | End_of_file -> acc
   in Array.of_list (List.rev (do_parse []));;
-
 
 (* 
   Input:
     . k -> nº de variáveis da função booleana.
   
   Funcionamento:
-    . Após o utilizador passar o nº de variáveis que deseja, efetua-se o cálculo do tamanho da tabela e guarda-se
-    o nº de linhas na variável "nLinhas" e o nº de colunas na "nColunas".
-    . É criado um array bi-dimensional, "tabela", com tamanho "nLinhas", que no seu interior, irá ter vários arrays de
+    . Após o utilizador passar o nº de variáveis presentes na tabela de verdade, efetua-se o cálculo do tamanho da tabela 
+    e guarda-se o nº de linhas na variável "nLinhas" e o nº de colunas na "nColunas".
+    . É criado um array bi-dimensional "tabela", com tamanho "nLinhas", que no seu interior, irá ter vários arrays de
     tamanho "nColunas" inicializados a 0.
     . É percorrido o array bi-dimensional, até à sua última posição, onde em cada posição é colocado o array resultante da função "stdinLineToArray (read_line())"
 
@@ -139,97 +136,89 @@ let stdinLineToArray s =
     . (int array array) -> Array constituido por arrays de inteiros.
 
 *)
-
 let criaTabelaVerdade k =
-  let nLinhas = int_of_float (2. ** k) in
-  let nColunas = int_of_float(k +. 1.) in
+  let nLinhas = int_of_float (2. ** (float_of_int k)) in
+  let nColunas = (k + 1) in
   let tabela = Array.init nLinhas (fun i -> Array.make nColunas 0) in
-  for i = 0 to (nLinhas-1) do
-    tabela.(i) <- (stdinLineToArray (read_line()));
+  for linha = 0 to (nLinhas-1) do
+    tabela.(linha) <- (stdinLineToArray (read_line()));
   done;
   tabela;;
 
-
 (* 
   Nota: Esta função é auxiliar da função "tabela_seletiva", que lhe sucede.
+
   Input:
     . tabela -> array bi-dimensional, onde estão armazenados os valores passados pelo utilizador.
-    . posvalorffloat -> posição onde se encontra o valor de f em cada linha da tabela, ou seja, última posição de cada array do array bi-dimensional, em float.
+    . posvalorf -> posição onde se encontra o valor de f em cada linha da tabela, ou seja, última posição de cada array presente no array bi-dimensional.
     . forma -> string "FNC" ou "FND".
+
   Funcionamento:
     .O algoritmo percorre o array bi-dimensional, tabela, posição a posição e:
       . Caso a forma seja FND:
         . Se encontrou um 1, na posição "posvalorf", soma um ao contador "nlinhasvalorf"
       . Caso a forma seja FNC:
         . Se encontrou um 1, na posição "posvalorf", soma 0 ao contador "nlinhasvalorf"
+
   Output:
     . (int) -> Nº de arrays do array bi-dimensional, cuja última posição desses, é 1 ou 0. Queremos o nº de linhas que, em cada linha da tabela, a sua última coluna é 1 ou 0, caso seja FND ou FNC, respetivamente.
 *)
-
-let contadorLinhasComValorf (tabela: int array array) (posvalorffloat: float) (forma: string): int =
-  let posvalorf = int_of_float (posvalorffloat) in
-  let len_tabela = Array.length tabela in
+let contadorLinhasComValorf tabela forma =
+  let totalLinhas = Array.length tabela in
+  let posvalorf = int_of_float (log(float_of_int totalLinhas)) in
   let nlinhasvalorf = ref 0 in
-  for i = 0 to (len_tabela -1 ) do
-    if forma = "FND" then (
-      if tabela.(i).(posvalorf) == 1 then (
-        nlinhasvalorf := !nlinhasvalorf + 1)
-    )
+  for linha = 0 to (totalLinhas -1 ) do
+    if (forma = "FND" && tabela.(linha).(posvalorf) == 1) 
+      then (nlinhasvalorf := !nlinhasvalorf + 1)
     else (
-      if forma = "FNC" then (
-        if tabela.(i).(posvalorf) == 0 then (
-          nlinhasvalorf := !nlinhasvalorf + 1)
-      )
+      if (forma = "FNC" && tabela.(linha).(posvalorf) == 0 ) 
+        then (nlinhasvalorf := !nlinhasvalorf + 1)
     )
   done;
   !nlinhasvalorf;;
 
-
 (* 
   Input:
     . tabela -> array bi-dimensional, onde estão armazenados os valores passados pelo utilizador.
-    . posvalorffloat -> posição onde se encontra o valor de f em cada linha da tabela, ou seja, última posição de cada array do array bi-dimensional, em float.
+    . posvalorf-> posição onde se encontra o valor de f em cada linha da tabela, ou seja, última posição de cada array presente no array bi-dimensional.
     . nlinhasvalorf -> Nº de arrays do array bi-dimensional, cuja última posição desses, é 1 ou 0, caso seja, FND ou FNC, respetivamente.
     . forma -> string "FNC" ou "FND".
+
   Funcionamento:
     . É criado o "arraySeletivo", int array array, onde iram ser armazenados somente as linhas cujo valor, na última coluna, de cada, seja 1 ou 0, caso seja, FND e FNC, respetivamente. Este, tem menos uma coluna que a tabela(todas menos aquela onde é armazenado o valor de f), e o nº linhas que a função antecedora "contadorLinhasComValorf" retornou. 
     .O algoritmo percorre o array bi-dimensional, tabela, posição a posição e:
       . Caso a forma seja FND:
         . Se encontrou um 1, na posição "posvalorf":
             . Percorre o "arraySeletivo", posição a posição e:
-              . Armazena os arrays do array bi-dimensional sem a última posição e onde, estes tinham, nessa última posição, valor um.
+              . Armazena os arrays do array bi-dimensional sem a última posição e onde estes tinham, nessa última posição, o valor 1.
       . Caso a forma seja FNC:
         . Se encontrou um 0, na posição "posvalorf":
             . Percorre o "arraySeletivo", posição a posição e:
-              . Armazena os arrays do array bi-dimensional sem a última posição e onde, estes tinham, nessa última posição, valor zero.
+              . Armazena os arrays do array bi-dimensional sem a última posição e onde estes tinham, nessa última posição, o valor 0.
+  
   Output:
-    . (int array array) -> "arraySeletivo", que tem de tamanho o nº linhas que a função antecedora "contadorLinhasComValorf" retornou e armazena só arrays cujo f é 0 ou 1, sem esta coluna f.
+    . (int array array) -> "arraySeletivo", que tem de tamanho o nº linhas que a função antecedora "contadorLinhasComValorf" retornou e armazena só arrays cujo f é 0 ou 1, sem esta última coluna f.
 *)
-
-let tabela_seletiva (tabela: int array array) (posvalorffloat: float) (nlinhasvalorf: int) (forma: string): (int array array) =
-  let posvalorf = int_of_float (posvalorffloat) in
+let tabela_seletiva tabela nlinhasvalorf forma =
+  let totalLinhas = Array.length tabela in
+  let posvalorf = int_of_float (log(float_of_int totalLinhas)) in
   let arraySeletivo = Array.init (nlinhasvalorf) (fun i -> Array.make posvalorf 0) in
-  let len_tabela = Array.length tabela in
   let incrementador = ref 0 in
-  for i = 0 to (len_tabela - 1) do
-    if forma = "FND" then (
-      if tabela.(i).(posvalorf) == 1 then  
-        (for j = 0 to (posvalorf-1) do
-           arraySeletivo.(!incrementador).(j) <- tabela.(i).(j);
-         done;
-         incrementador := !incrementador + 1))
+  for linha = 0 to (totalLinhas - 1) do
+    if (forma = "FND" && tabela.(linha ).(posvalorf) == 1) then (
+      for coluna = 0 to (posvalorf-1) do
+        arraySeletivo.(!incrementador).(coluna) <- tabela.(linha).(coluna);
+      done;
+      incrementador := !incrementador + 1)
     else (
-      if forma = "FNC" then (
-        if tabela.(i).(posvalorf) == 0 then  
-        (for j = 0 to (posvalorf-1) do
-           arraySeletivo.(!incrementador).(j) <- tabela.(i).(j);
-         done;
-         incrementador := !incrementador + 1)
-      )
+      if (forma = "FNC" && tabela.(linha).(posvalorf) == 0) then (
+      for coluna = 0 to (posvalorf-1) do
+        arraySeletivo.(!incrementador).(coluna) <- tabela.(linha).(coluna);
+      done;
+      incrementador := !incrementador + 1)
     )
   done;
   arraySeletivo;;
-
 
 (* 
   Input: 
@@ -264,7 +253,8 @@ let constroiTabelaLetras tabelaDeVars forma =
         else (
           tabelaLetras.(linha).(coluna) <- Neg letras.(coluna)
         )
-      ) else (
+      )
+      else (
         if(tabelaDeVars.(linha).(coluna) == 0) then (
           tabelaLetras.(linha).(coluna) <- Lit letras.(coluna)
         )
@@ -300,7 +290,7 @@ let constroiTabelaLetras tabelaDeVars forma =
   Fonte: Baseamo-nos no seguinte vídeo para elaborar um esboço de resolução do problema:
   https://www.youtube.com/watch?v=Zq1QJ2QztgM
 *)
-let conjugaLista (lista: formula list) : formula =
+let conjugaLista lista =
   let conjugar a b = Conj(a,b) in
   let listaSemPrimeiroElemento = List.tl lista in 
   let primeiroElementoLista = List.hd lista in
@@ -321,7 +311,7 @@ let conjugaLista (lista: formula list) : formula =
   Fonte: Baseamo-nos no seguinte vídeo para elaborar um esboço de resolução do problema:
   https://www.youtube.com/watch?v=Zq1QJ2QztgM
 *)
-let disjuncaoLista (lista: formula list) : formula =
+let disjuncaoLista lista =
   let disjuncao a b = Disj(a,b) in
   let listaSemPrimeiroElemento = List.tl lista in 
   let primeiroElementoLista = List.hd lista in
@@ -349,35 +339,34 @@ let disjuncaoLista (lista: formula list) : formula =
 let formulasDasLinhas tabelaDeLetras forma =
   let linhasTabela = Array.length tabelaDeLetras in
   let linhasFormuladas = Array.make linhasTabela (Lit 'a') in
-  for posTabela = 0 to (linhasTabela-1) do
+  for linha = 0 to (linhasTabela-1) do
     if(forma = "FND") then (
-      linhasFormuladas.(posTabela) <- conjugaLista (Array.to_list (tabelaDeLetras.(posTabela)));
+      linhasFormuladas.(linha) <- conjugaLista (Array.to_list (tabelaDeLetras.(linha)));
     )
     else (
-      linhasFormuladas.(posTabela) <- disjuncaoLista (Array.to_list (tabelaDeLetras.(posTabela)));
+      linhasFormuladas.(linha) <- disjuncaoLista (Array.to_list (tabelaDeLetras.(linha)));
     )  
     done;
   linhasFormuladas;;
 
+
 (* CORPO DO PROGRAMA *)
 
-let k = read_float();;
-
+let k = read_int();;
 let tabelaVerdade = criaTabelaVerdade k;;
 
-let tabelaSeletivaFND = tabela_seletiva tabelaVerdade k (contadorLinhasComValorf tabelaVerdade k "FND") "FND";;
-let tabelaSeletivaFNC = tabela_seletiva tabelaVerdade k (contadorLinhasComValorf tabelaVerdade k "FNC") "FNC";;
-
+(* Para FND *)
+let tabelaSeletivaFND = tabela_seletiva tabelaVerdade (contadorLinhasComValorf tabelaVerdade "FND") "FND";;
 let tabelaLetrasFND = constroiTabelaLetras tabelaSeletivaFND "FND";;
-let tabelaLetrasFNC = constroiTabelaLetras tabelaSeletivaFNC "FNC";;
-
 let linhasFormuladasFND = formulasDasLinhas tabelaLetrasFND "FND";;
-let linhasFormuladasFNC = formulasDasLinhas tabelaLetrasFNC "FNC";;
-
 let formulaFinalFND = disjuncaoLista (Array.to_list linhasFormuladasFND);;
-let formulaFinalFNC = conjugaLista (Array.to_list linhasFormuladasFNC);;
-
 print_formula formulaFinalFND;;
+
+(* Para FNC *)
+let tabelaSeletivaFNC = tabela_seletiva tabelaVerdade (contadorLinhasComValorf tabelaVerdade "FNC") "FNC";;
+let tabelaLetrasFNC = constroiTabelaLetras tabelaSeletivaFNC "FNC";;
+let linhasFormuladasFNC = formulasDasLinhas tabelaLetrasFNC "FNC";;
+let formulaFinalFNC = conjugaLista (Array.to_list linhasFormuladasFNC);;
 print_formula formulaFinalFNC;;
 
 (* EXEMPLO DE FUNCIONAMENTO *)
